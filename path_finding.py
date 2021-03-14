@@ -47,8 +47,30 @@ def getClickedPos(pos, rows, width):
     col =  y//gap
     return rows,col
 
+def get_txt(num):
+    text = ""
+
+    if num == 1:
+        text = "A* Search"
+
+    elif num == 2:
+        text = "Dijkstra's Algorithm"
+
+    elif num == 3:
+        text = "Breadth-first Search"
+
+    elif num == 4:
+        text = "Depth-first Search"
+
+    elif num == 5:
+        text = "Greedy Best-first Search"
+
+    return text
+
 def main(win, width,ROWS):
     grid = setGrid(ROWS, width)
+    txt = "PathFinding Visualizer"
+    num = 1
 
     run = True
     started = False
@@ -82,7 +104,6 @@ def main(win, width,ROWS):
                     spot.setWall()
                     spot.draw(win)
                
-
             elif pygame.mouse.get_pressed()[2]:
                 pos = pygame.mouse.get_pos()
                 row , col = getClickedPos(pos,ROWS , width)
@@ -98,18 +119,36 @@ def main(win, width,ROWS):
                     for row in grid:
                         for spot in row:
                             spot.updateNeighbour(grid)
-                    pygame.display.set_caption("A* Algorithm")
-                    algorithm(lambda: draw(win,grid,ROWS,width), grid ,start ,end, VISUALIZE)
+
+                    txt = get_txt(num)
+                    if VISUALIZE:
+                        txt += ("(Visualizer)")
+                    else:
+                        txt += ("(No Visualizer)")
+
+                    pygame.display.set_caption(txt)
+                    algo(lambda: draw(win,grid,ROWS,width), grid ,start ,end, VISUALIZE, num)
                 if event.key ==pygame.K_c:
                     start =None
                     end   =None
                     grid = setGrid(ROWS, width)
-                    pygame.display.set_caption("PathFinding Visualizer")
+                    txt = "PathFinding Visualizer"
                 if event.key ==pygame.K_v:
                     if VISUALIZE:
                         VISUALIZE = False
                     else:
                         VISUALIZE = True
+
+                if event.key == pygame.K_1:
+                    num = 1
+                if event.key == pygame.K_2:
+                    num = 2
+                if event.key == pygame.K_3:
+                    num = 3
+                if event.key == pygame.K_4:
+                    num = 4
+                if event.key == pygame.K_5:
+                    num = 5
 
 main(win, WIDTH, ROWS)
 

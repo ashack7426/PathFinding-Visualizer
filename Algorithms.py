@@ -15,7 +15,26 @@ def reconstructPath(camefrom, end, draw, VISUALIZE):
         if VISUALIZE:
             draw()
 
-def algorithm(draw, grid, start, end, VISUALIZE):
+
+def algo(draw, grid, start, end, VISUALIZE, num):
+    check = False
+
+    if num == 1:
+        check = Astar(draw, grid, start, end, VISUALIZE)
+    elif num == 2:
+        check = Dijkstras(draw, grid, start, end, VISUALIZE)
+    elif num == 3:
+        check = Breadth_first_search(draw, grid, start, end, VISUALIZE)
+    elif num == 4:
+        check = Depth_first_search(draw, grid, start, end, VISUALIZE)
+    elif num == 5:
+        check = best_first_search(draw, grid, start, end, VISUALIZE)
+    
+
+    return check
+
+
+def Astar(draw, grid, start, end, VISUALIZE):
     count =0
     openSet= PriorityQueue()
     openSet.put((0, count, start))
@@ -62,3 +81,14 @@ def algorithm(draw, grid, start, end, VISUALIZE):
     return False
 
 
+def Dijkstras(draw, grid, start, end, VISUALIZE):
+    draw()
+
+def Breadth_first_search(draw, grid, start, end, VISUALIZE):
+    draw()
+
+def Depth_first_search(draw, grid, start, end, VISUALIZE):
+    draw()
+
+def best_first_search(draw, grid, start, end, VISUALIZE):
+    draw()
