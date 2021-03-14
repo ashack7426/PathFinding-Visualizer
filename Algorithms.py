@@ -7,9 +7,9 @@ def h(p1, p2):
     x2,y2 =p2
     return abs(x1-x2) +abs(y1-y2)
 
-def reconstructPath(camefrom, end, draw, VISUALIZE):
+def reconstructPath(camefrom, end, start, draw, VISUALIZE):
     current =end
-    while current in camefrom:
+    while current in camefrom and current != start:
         current = camefrom[current]
         current.setPath()
         if VISUALIZE:
@@ -26,7 +26,9 @@ def algo(draw, grid, start, end, VISUALIZE, num):
     elif num == 3:
         check = Breadth_first_search(draw, grid, start, end, VISUALIZE)
     elif num == 4:
-        check = Depth_first_search(draw, grid, start, end, VISUALIZE)
+        visited = {spot:False for rows in grid for spot in rows}
+        cameFrom[start] = None
+        check = Depth_first_search(draw, grid, start, end, VISUALIZE, cameFrom, visited)
     elif num == 5:
         check = best_first_search(draw, grid, start, end, VISUALIZE)
     
@@ -40,8 +42,8 @@ def Astar(draw, grid, start, end, VISUALIZE):
     openSet.put((0, count, start))
     openSetHash={start}
     cameFrom ={}
-    g_score={cube:float("inf") for rows in grid for cube in rows}
-    f_score={cube:float("inf") for rows in grid for cube in rows}
+    g_score={spot:float("inf") for rows in grid for spot in rows}
+    f_score={spot:float("inf") for rows in grid for spot in rows}
     g_score[start]=0
     f_score[start]= h(start.getPos(),end.getPos())
 
@@ -54,7 +56,7 @@ def Astar(draw, grid, start, end, VISUALIZE):
         openSetHash.remove(current)
         if current == end:
             end.setEnd()
-            reconstructPath(cameFrom, end , draw, VISUALIZE)
+            reconstructPath(cameFrom, end , start,draw, VISUALIZE)
             start.setStart()
             return True
         
@@ -82,13 +84,83 @@ def Astar(draw, grid, start, end, VISUALIZE):
 
 
 def Dijkstras(draw, grid, start, end, VISUALIZE):
-    draw()
+    pass
 
 def Breadth_first_search(draw, grid, start, end, VISUALIZE):
-    draw()
+    visited = {spot:False for rows in grid for spot in rows}
+    queue = []
+    cameFrom = {}
 
-def Depth_first_search(draw, grid, start, end, VISUALIZE):
-    draw()
+    queue.append(start)
+    cameFrom[start] = None
+
+    while queue:
+        spot = queue.pop(0)
+
+        if spot == end:
+            end.setEnd()
+            reconstructPath(cameFrom, end , start, draw, VISUALIZE)
+            start.setStart()
+            return True
+
+        for neighbour in spot.neighbours:
+            if neighbour not in cameFrom:
+                queue.append(neighbour)
+                cameFrom[neighbour] = spot
+
+                if VISUALIZE:
+                    neighbour.setOpen()   
+
+        if VISUALIZE:
+            draw()
+
+        if spot != start and VISUALIZE:
+            spot.setClosed()
+
+    return False
+
+
+
+def Depth_first_search(draw, grid, start, end, VISUALIZE, cameFrom, visited):
+    pass
+
+
+
 
 def best_first_search(draw, grid, start, end, VISUALIZE):
-    draw()
+    visited = {spot:False for rows in grid for spot in rows}
+    visited[start] = True
+    pq = PriorityQueue()
+    pq.put((0,start))
+    count = 0
+    cameFrom = {}
+    cameFrom[start] = None
+
+    while not pq.empty():
+        spot = pq.get()[1]
+        
+        if spot == end:
+            end.setEnd()
+            reconstructPath(cameFrom, end , start, draw, VISUALIZE)
+            start.setStart()
+            return True
+
+        for neighbour in spot.neighbours:
+            if not visited[neighbour]:
+                visited[neighbour] = True
+                cameFrom[neighbour] = spot
+                pq.put((h(end.getPos(), neighbour.getPos()), neighbour))
+
+                if VISUALIZE:
+                    neighbour.setOpen()   
+
+        if VISUALIZE:
+            draw()
+
+        if spot != start and VISUALIZE:
+            spot.setClosed()
+
+    return False
+        
+
+        
