@@ -2,6 +2,7 @@ from constants import *
 import pygame
 from queue import PriorityQueue
 
+
 def h(p1, p2):
     x1,y1 =p1
     x2,y2 =p2
@@ -26,9 +27,7 @@ def algo(draw, grid, start, end, VISUALIZE, num):
     elif num == 3:
         check = Breadth_first_search(draw, grid, start, end, VISUALIZE)
     elif num == 4:
-        visited = {spot:False for rows in grid for spot in rows}
-        cameFrom[start] = None
-        check = Depth_first_search(draw, grid, start, end, VISUALIZE, cameFrom, visited)
+        check = Depth_first_search(draw, grid, start, end, VISUALIZE)
     elif num == 5:
         check = best_first_search(draw, grid, start, end, VISUALIZE)
     
@@ -84,7 +83,44 @@ def Astar(draw, grid, start, end, VISUALIZE):
 
 
 def Dijkstras(draw, grid, start, end, VISUALIZE):
-    pass
+    pq = PriorityQueue()
+    pq.put((0,start))
+    
+    cameFrom = {}
+    cameFrom[start] = None
+
+    cost = {}
+    cost[start] = 0
+
+    while not pq.empty():
+        spot = pq.get()[1]
+        
+        if spot == end:
+            end.setEnd()
+            reconstructPath(cameFrom, end , start, draw, VISUALIZE)
+            start.setStart()
+            return True
+
+        for neighbour in spot.neighbours:
+            new_cost = cost[spot] + h(spot.getPos(), neighbour.getPos())
+            if neighbour not in cost or new_cost < cost[neighbour]:
+                cost[neighbour] = new_cost
+                priority = new_cost
+                pq.put((priority, neighbour))
+                cameFrom[neighbour] = spot
+
+                if VISUALIZE:
+                    neighbour.setOpen()
+
+        if VISUALIZE:
+            draw()
+
+        if spot != start and VISUALIZE:
+            spot.setClosed()
+
+    return False
+        
+
 
 def Breadth_first_search(draw, grid, start, end, VISUALIZE):
     visited = {spot:False for rows in grid for spot in rows}
@@ -121,10 +157,38 @@ def Breadth_first_search(draw, grid, start, end, VISUALIZE):
 
 
 
-def Depth_first_search(draw, grid, start, end, VISUALIZE, cameFrom, visited):
-    pass
+def Depth_first_search(draw, grid, start, end, VISUALIZE):
+    visited = {spot:False for rows in grid for spot in rows}
+    visited[start] = True
+    stack = [start]
+    cameFrom = {}
+    cameFrom[start] = None
 
+    while stack:
+        spot = stack.pop()
 
+        if spot == end:
+            end.setEnd()
+            reconstructPath(cameFrom, end,start, draw, VISUALIZE)
+            start.setStart()
+            return True
+
+        for neighbour in spot.neighbours:
+            if not visited[neighbour]:
+                visited[neighbour] = True
+                stack.append(neighbour)
+                cameFrom[neighbour] = spot
+
+                if VISUALIZE:
+                    neighbour.setOpen()
+
+        if VISUALIZE:
+            draw()
+
+        if spot != start and VISUALIZE:
+            spot.setClosed()
+
+    return False
 
 
 def best_first_search(draw, grid, start, end, VISUALIZE):

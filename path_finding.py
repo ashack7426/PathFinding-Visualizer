@@ -10,6 +10,7 @@ import pygame
 import math
 from Algorithms import *
 from Spot import *
+import copy
 
 win = pygame.display.set_mode((WIDTH,WIDTH))
 pygame.display.set_caption("PathFinding Visualizer")
@@ -23,15 +24,6 @@ def setGrid(rows, width):
             spot = Spot(i,j,gap,rows)
             grid[i].append(spot)
     return grid
-
-def resetGrid(rows,grid, width):
-    for i in range(rows):
-        for j in range(rows):
-            spot = grid[i][j]
-            if not spot.isStart and not spot.isEnd:
-                grid[i][j].reset()
-                spot.draw(win)
-
 
 def drawGrid(win, rows , width):
     gap =width //rows
@@ -125,11 +117,13 @@ def main(win, width,ROWS):
                 spot.draw(win)
             if event.type == pygame.KEYDOWN:
                 if event.key ==pygame.K_SPACE and start and end:
-                    resetGrid(ROWS, grid, width)
 
                     for row in grid:
                         for spot in row:
                             spot.updateNeighbour(grid)
+                            if spot.color != BLACK and (spot.isClosed or spot.isOpen) and (spot != start and spot != end):
+                                spot.reset()
+                                spot.draw(win)
 
                     txt = get_txt(num)
                     if VISUALIZE:

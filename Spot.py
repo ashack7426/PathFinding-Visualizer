@@ -27,6 +27,9 @@ class Spot:
     def isEnd(self):
         return self.color == RED
     
+    def isPath(self):
+        return self.color == GREEN
+    
     def isWall(self):
         return self.color == BLACK
     
